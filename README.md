@@ -48,8 +48,10 @@ new Dogs("Corgie", 35, true);
 
 ### Stretch Goals
 
-| Method | Endpoint                 | Description                                                  |
-| ------ | -------------------------| -------------------------------------------------------------|
-| DELETE | `/dogs/{breeds}`         | Deletes that dog breed                                       |
+- Add an additional endpoint
 
-Throughout the project, when adding dogs make sure the breed names are unique.
+    | Method | Endpoint                 | Description                 |
+    | ------ | -------------------------| ----------------------------|
+    | DELETE | `/dogs/{breeds}`         | Deletes that dog breed      |
+
+- Throughout the project, when adding dogs make sure the breed names are unique.
