@@ -88,4 +88,20 @@ public class DogController {
     return new Resources<>(dogs,
             linkTo(methodOn(DogController.class).allByWeight()).withSelfRel());
   }
+
+  /**
+   * Returns a listing of all dogs of a specified breed.
+   *
+   * @param breed The dog breed
+   * @return      A collection of dog resource objects
+   */
+  @GetMapping("/breeds/{breed}")
+  public Resources<Resource<Dog>> findByBreed(@PathVariable String breed) {
+    List<Resource<Dog>> dogs = DOGREPO.findByBreed(breed).stream()
+            .map(ASSEMBLER::toResource)
+            .collect(Collectors.toList());
+
+    return new Resources<>(dogs,
+            linkTo(methodOn(DogController.class).findByBreed(breed)).withSelfRel());
+  }
 }
