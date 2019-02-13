@@ -181,4 +181,16 @@ public class DogController {
     DOG_REPO.deleteById(id);
     return ResponseEntity.noContent().build();
   }
+
+  /**
+   * Delete the dog of the given breed.
+   *
+   * @param breed  A dog breed
+   * @return       A Response Entity; a response body with No Content status
+   */
+  @DeleteMapping("/breeds/{breed}")
+  public ResponseEntity<?> delete(@PathVariable String breed) {
+    DOG_REPO.deleteByBreed(breed);
+    return ResponseEntity.noContent().build();
+  }
 }

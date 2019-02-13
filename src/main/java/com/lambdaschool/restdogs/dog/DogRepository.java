@@ -1,6 +1,7 @@
 package com.lambdaschool.restdogs.dog;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,4 +12,7 @@ import java.util.List;
 public interface DogRepository extends JpaRepository<Dog, Long> {
   List<Dog> findByBreed(String breed);
   List<Dog> findByApartmentIsTrue();
+
+  @Transactional
+  void deleteByBreed(String breed);
 }
