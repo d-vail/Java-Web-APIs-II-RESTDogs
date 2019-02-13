@@ -104,4 +104,19 @@ public class DogController {
     return new Resources<>(dogs,
             linkTo(methodOn(DogController.class).findByBreed(breed)).withSelfRel());
   }
+
+  /**
+   * Returns a listing of all dogs suitable for apartments.
+   *
+   * @return  A collection of dog resource objects
+   */
+  @GetMapping("/apartment")
+  public Resources<Resource<Dog>> findByApartment() {
+    List<Resource<Dog>> dogs = DOGREPO.findByApartmentIsTrue().stream()
+            .map(ASSEMBLER::toResource)
+            .collect(Collectors.toList());
+
+    return new Resources<>(dogs,
+            linkTo(methodOn(DogController.class).findByApartment()).withSelfRel());
+  }
 }

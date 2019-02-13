@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface DogRepository extends JpaRepository<Dog, Long> {
   List<Dog> findByBreed(String breed);
+  List<Dog> findByApartmentIsTrue();
 }
