@@ -2,6 +2,7 @@ package com.lambdaschool.restdogs.dog;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,24 +13,9 @@ import javax.persistence.Id;
 @Data   // Generates getters, setters, toString
 @Entity // Preps object for JPA storage
 public class Dog {
-  /**
-   * Primary key; automatically generated.
-   */
   private @Id @GeneratedValue Long id;
-
-  /**
-   * The dog breed.
-   */
-  private String breed;
-
-  /**
-   * The weight of the dog breed.
-   */
+  private @Column(unique = true) String breed;
   private int weight;
-
-  /**
-   * True/False, whether the dog breed is suitable for apartments.
-   */
   private boolean apartment;
 
   /**
