@@ -169,4 +169,16 @@ public class DogController {
             .created(new URI(dogResource.getId().expand().getHref()))
             .body(dogResource);
   }
+
+  /**
+   * Delete the dog with the given id.
+   *
+   * @param id  A dog id
+   * @return    A Response Entity; a response body with No Content status
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> delete(@PathVariable Long id) {
+    DOG_REPO.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
 }
