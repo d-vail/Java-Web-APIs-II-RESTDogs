@@ -1,5 +1,6 @@
 package com.lambdaschool.restdogs.dog;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,5 +55,20 @@ public class DogController {
     Dog dog = DOGREPO.findById(id)
             .orElseThrow(() -> new DogNotFoundException(id));
     return ASSEMBLER.toResource(dog);
+  }
+
+  /**
+   * Returns a listing of all dogs
+   * @return
+   */
+  @GetMapping("/breeds")
+  public Resources<Resource<Dog>> allByBreed() {
+    List<Resource<Dog>> dogs = DOGREPO.findAll(new Sort(Sort.DEFAULT_DIRECTION, "breed"))
+            .stream()
+            .map(ASSEMBLER::toResource)
+            .collect(Collectors.toList());
+
+    return new Resources<>(dogs,
+            linkTo(methodOn(DogController.class).allByBreed()).withSelfRel());
   }
 }
