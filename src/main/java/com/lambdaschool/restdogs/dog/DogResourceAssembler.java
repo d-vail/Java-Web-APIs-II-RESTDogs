@@ -4,6 +4,9 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 /**
  * A Dog Resource Assembler class. Converts a Dog object into a Resource<Dog> object.
  */
@@ -20,7 +23,7 @@ public class DogResourceAssembler implements ResourceAssembler<Dog, Resource<Dog
   @Override
   public Resource<Dog> toResource(Dog dog) {
     return new Resource<Dog>(dog,
-            linkTo(methodOn(DogController).one(id)).withSelfRel(),
-            linkTo(methodOn(DogController).all()).withRel("dogs"));
+            linkTo(methodOn(DogController.class).one(dog.getId())).withSelfRel(),
+            linkTo(methodOn(DogController.class).all()).withRel("dogs"));
   }
 }
