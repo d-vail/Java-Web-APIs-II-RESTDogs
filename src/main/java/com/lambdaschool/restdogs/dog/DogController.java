@@ -58,8 +58,9 @@ public class DogController {
   }
 
   /**
-   * Returns a listing of all dogs
-   * @return
+   * Returns a listing of all dogs ordered by breed.
+   *
+   * @return A collection of dog resource objects
    */
   @GetMapping("/breeds")
   public Resources<Resource<Dog>> allByBreed() {
@@ -70,5 +71,21 @@ public class DogController {
 
     return new Resources<>(dogs,
             linkTo(methodOn(DogController.class).allByBreed()).withSelfRel());
+  }
+
+  /**
+   * Returns a listing of all dogs ordered by breed.
+   *
+   * @return A collection of dog resource objects
+   */
+  @GetMapping("/weight")
+  public Resources<Resource<Dog>> allByWeight() {
+    List<Resource<Dog>> dogs = DOGREPO.findAll(new Sort(Sort.DEFAULT_DIRECTION, "weight"))
+            .stream()
+            .map(ASSEMBLER::toResource)
+            .collect(Collectors.toList());
+
+    return new Resources<>(dogs,
+            linkTo(methodOn(DogController.class).allByWeight()).withSelfRel());
   }
 }
