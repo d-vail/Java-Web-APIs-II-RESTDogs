@@ -148,4 +148,18 @@ public class DogController {
             .created(new URI(dogResource.getId().expand().getHref()))
             .body(dogResource);
   }
+
+  @PostMapping
+  public ResponseEntity<?> create(@RequestBody Dog newDog) throws URISyntaxException {
+    // Save the new dog
+    Dog dogToCreate = DOG_REPO.save(newDog);
+
+    // Convert Dog object to Resource object
+    Resource<Dog> dogResource = ASSEMBLER.toResource(dogToCreate);
+
+    // Return Response Entity with HTTP 201 Created status
+    return ResponseEntity
+            .created(new URI(dogResource.getId().expand().getHref()))
+            .body(dogResource);
+  }
 }
