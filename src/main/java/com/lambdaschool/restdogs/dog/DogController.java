@@ -123,7 +123,7 @@ public class DogController {
   /**
    * Add, or update if already present, a single dog listing with the given id.
    *
-   * @return                    A Response Entity; a response body with status and headers
+   * @return                    A Response Entity; a response body with Created status
    * @throws URISyntaxException If there was a problem updating the record
    */
   @PutMapping("/{id}")
@@ -149,6 +149,13 @@ public class DogController {
             .body(dogResource);
   }
 
+  /**
+   * Create a new dog record.
+   *
+   * @param newDog              A JSON object with data for a new dog
+   * @return                    A Response Entity; a response body with Created status
+   * @throws URISyntaxException If there was a problem creating the record
+   */
   @PostMapping
   public ResponseEntity<?> create(@RequestBody Dog newDog) throws URISyntaxException {
     // Save the new dog
