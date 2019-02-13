@@ -3,11 +3,11 @@ package com.lambdaschool.restdogs.dog;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +20,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/dogs")
 public class DogController {
-  private final DogRepository DOGREPO;
+  private final DogRepository DOG_REPO;
   private final DogResourceAssembler ASSEMBLER;
 
   public DogController(DogRepository dogRepo, DogResourceAssembler assembler) {
-    this.DOGREPO = dogRepo;
+    this.DOG_REPO = dogRepo;
     this.ASSEMBLER = assembler;
   }
 
@@ -35,7 +35,7 @@ public class DogController {
    */
   @GetMapping()
   public Resources<Resource<Dog>> all() {
-    List<Resource<Dog>> dogs = DOGREPO.findAll().stream()
+    List<Resource<Dog>> dogs = DOG_REPO.findAll().stream()
             .map(ASSEMBLER::toResource)
             .collect(Collectors.toList());
 
@@ -52,7 +52,7 @@ public class DogController {
    */
   @GetMapping("/{id}")
   public Resource<Dog> one(@PathVariable Long id) {
-    Dog dog = DOGREPO.findById(id)
+    Dog dog = DOG_REPO.findById(id)
             .orElseThrow(() -> new DogNotFoundException(id));
     return ASSEMBLER.toResource(dog);
   }
@@ -64,7 +64,7 @@ public class DogController {
    */
   @GetMapping("/breeds")
   public Resources<Resource<Dog>> allByBreed() {
-    List<Resource<Dog>> dogs = DOGREPO.findAll(new Sort(Sort.DEFAULT_DIRECTION, "breed"))
+    List<Resource<Dog>> dogs = DOG_REPO.findAll(new Sort(Sort.DEFAULT_DIRECTION, "breed"))
             .stream()
             .map(ASSEMBLER::toResource)
             .collect(Collectors.toList());
@@ -80,7 +80,7 @@ public class DogController {
    */
   @GetMapping("/weight")
   public Resources<Resource<Dog>> allByWeight() {
-    List<Resource<Dog>> dogs = DOGREPO.findAll(new Sort(Sort.DEFAULT_DIRECTION, "weight"))
+    List<Resource<Dog>> dogs = DOG_REPO.findAll(new Sort(Sort.DEFAULT_DIRECTION, "weight"))
             .stream()
             .map(ASSEMBLER::toResource)
             .collect(Collectors.toList());
@@ -97,7 +97,7 @@ public class DogController {
    */
   @GetMapping("/breeds/{breed}")
   public Resources<Resource<Dog>> findByBreed(@PathVariable String breed) {
-    List<Resource<Dog>> dogs = DOGREPO.findByBreed(breed).stream()
+    List<Resource<Dog>> dogs = DOG_REPO.findByBreed(breed).stream()
             .map(ASSEMBLER::toResource)
             .collect(Collectors.toList());
 
@@ -112,11 +112,40 @@ public class DogController {
    */
   @GetMapping("/apartment")
   public Resources<Resource<Dog>> findByApartment() {
-    List<Resource<Dog>> dogs = DOGREPO.findByApartmentIsTrue().stream()
+    List<Resource<Dog>> dogs = DOG_REPO.findByApartmentIsTrue().stream()
             .map(ASSEMBLER::toResource)
             .collect(Collectors.toList());
 
     return new Resources<>(dogs,
             linkTo(methodOn(DogController.class).findByApartment()).withSelfRel());
+  }
+
+  /**
+   * Add, or update if already present, a single dog listing with the given id.
+   *
+   * @return                    A Response Entity; a response body with status and headers
+   * @throws URISyntaxException If there was a problem updating the record
+   */
+  @PutMapping("/{id}")
+  public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Dog updatedDog) throws URISyntaxException {
+    // If dog exists update fields, else set id on updatedDog and save as new record
+    Dog dogToUpdate = DOG_REPO.findById(id)
+            .map(dog -> {
+              dog.setBreed(updatedDog.getBreed());
+              dog.setWeight(updatedDog.getWeight());
+              dog.setApartment(updatedDog.isApartment());
+              return DOG_REPO.save(dog);
+            }).orElseGet(() -> {
+              updatedDog.setId(id);
+              return DOG_REPO.save(updatedDog);
+            });
+
+    // Convert Dog object to Resource object
+    Resource<Dog> dogResource = ASSEMBLER.toResource(dogToUpdate);
+
+    // Return Response Entity with HTTP 201 Created status
+    return ResponseEntity
+            .created(new URI(dogResource.getId().expand().getHref()))
+            .body(dogResource);
   }
 }
