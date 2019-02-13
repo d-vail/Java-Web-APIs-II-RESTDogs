@@ -52,6 +52,6 @@ new Dogs("Corgie", 35, true);
 
     | Method | Endpoint                 | Description                 |
     | ------ | -------------------------| ----------------------------|
-    | DELETE | `/dogs/{breeds}`         | Deletes that dog breed      |
+    | DELETE | `/dogs/breeds/{breed}`   | Deletes that dog breed      |
 
 - Throughout the project, when adding dogs make sure the breed names are unique.
